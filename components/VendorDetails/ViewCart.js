@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import OrderItem from "./OrderItem";
 import firebase from "../../firebase";
+// import { db } from "../../firebase";
 
 export default function ViewCart() {
   const [modalViisible, setModalVisible] = useState(false);
@@ -19,7 +20,15 @@ export default function ViewCart() {
     style: "currency",
     currency: "NGN",
   });
-
+  const addOrderToFireBase = () => {
+    // const db = firebase.firestore;
+    db.collection("orders").add({
+      items: items,
+      restaurantName: restaurantName,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setModalVisible(false);
+  };
   //console.log(totalNGN);
 
   const checkoutModalContent = () => {
@@ -103,16 +112,6 @@ export default function ViewCart() {
     },
   });
 
-  const addOrderToFirebase = () => {
-    const myDatabase = firebase.firestore();
-    myDatabase.collection("orders").add({
-      items: items,
-      restaurantName: restaurantName,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    setModalVisible(false);
-  };
-
   return (
     <>
       <Modal
@@ -156,7 +155,7 @@ export default function ViewCart() {
                 position: "relative",
               }}
               onPress={() => {
-                addOrderToFirebase();
+                addOrderToFireBase();
               }}
             >
               <Text style={{ color: "white", fontSize: 20, marginRight: 30 }}>
